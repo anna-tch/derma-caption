@@ -209,23 +209,13 @@ def main():
 	print('#  Test model ')
 	print('#######################################################################\n\n\n')
 
-	actual, predicted, image_ids = evaluate_model(model, test_descriptions, test_features)
-	# calculate BLEU score
-	b1=corpus_bleu(actual, predicted, weights=(1.0, 0, 0, 0))
-	b2=corpus_bleu(actual, predicted, weights=(0.5, 0.5, 0, 0))
-	b3=corpus_bleu(actual, predicted, weights=(0.3, 0.3, 0.3, 0))
-	b4=corpus_bleu(actual, predicted, weights=(0.25, 0.25, 0.25, 0.25))
-	print('\n')
-	print('BLEU-1: %f' % b1)
-	print('BLEU-2: %f' % b2)
-	print('BLEU-3: %f' % b3)
-	print('BLEU-4: %f' % b4)
-
-	# normalize
+	# evaluate bleu score, store results
+	actual, predicted, image_ids = evaluate_model(model, test_descriptions, test_features, wordtoix, ixtoword, max_length)
+	# normalize the results
 	ref, pred = normalize_ref_and_pred(actual, predicted)
-	# create df from the dictionary
+	# create df from the references dictionary
 	df = pd.DataFrame.from_dict(ref, orient='index', columns=['ref_1', 'ref_2', 'ref_3', 'ref_4', 'ref_5'])
-	# add ids, predicted captions
+	# add ids and predicted captions to df
 	df.insert(0, "image_id", image_ids, True)
 	df.insert(1, "predicted", pred, True)
 	# save
