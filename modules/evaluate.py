@@ -140,9 +140,12 @@ def evaluate_model(model, descriptions, photos_fe, wordtoix, ixtoword, max_lengt
     new_ref, new_pred = normalize_ref_and_pred(actual, predicted)
 
     # print results
+    print("Example of the last caption :")
     for key, value in new_ref.items():
-        print("Actual caption - {} - {}".format(key, value))
-        print("Predicted caption - {}".format(new_pred[key]))
+        if key == 128:
+            for i, val in enumerate(value):
+                print("Actual caption - {} - {}".format(i, val))
+            print("Predicted caption - {}".format(new_pred[key]))
 
 
     # calculate BLEU score
