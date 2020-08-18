@@ -104,7 +104,10 @@ def normalize_ref_and_pred(actual, predicted):
 
     # normalize predicted
 
-    new_pred = " ".join(predicted).replace("<startseq>", "").replace("<endseq>", "")
+    new_pred = {}
+    for i, line in enumerate(predicted):
+        pred = " ".join(line).replace("<startseq>", "").replace("<endseq>", "")
+        new_pred[i] = pred
 
     return ref, new_pred
 
@@ -138,8 +141,10 @@ def evaluate_model(model, descriptions, photos_fe, wordtoix, ixtoword, max_lengt
 
     # print results
     for key, value in new_ref.items():
+        for k, v in new_pred.items():
         print("Actual caption - {} - {}".format(key, value))
-    print("Predicted caption - {}".format(new_pred))
+        if key == k:
+            print("Predicted caption - {}".format(new_pred[]))
 
 
     # calculate BLEU score
