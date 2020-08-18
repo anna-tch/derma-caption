@@ -146,7 +146,7 @@ def evaluate_model(model, descriptions, photos_fe, wordtoix, ixtoword, max_lengt
         if i == len(new_ref) - 1:
             for i, val in enumerate(new_ref[i]):
                 print("{} - {}".format(i, val))
-            print("Predicted caption : {}".format(new_pred[key]))
+            print("Predicted caption : {}".format(new_pred[i]))
 
 
     # calculate BLEU score
