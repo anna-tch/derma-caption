@@ -90,7 +90,25 @@ def beam_search_pred(model, pic_fe, wordtoix, ixtoword, max_length, K_beams = 3,
 
 
 
+def normalize_ref_and_pred(actual, predicted):
+    # normalize references
+    ref = {}
+    for i, line in enumerate(actual):
+        sentences = []
+        for sentence in line:
+            sentence = [word for word in sentence if word != '<startseq>']
+            sentence = [word for word in sentence if word != '<endseq>']
+            sentences.append(' '.join(sentence))
+            # store
+        ref[i] = sentences
 
+    # normalize predicted
+    pred = []
+    for i, line in enumerate(predicted):
+        sentence = ' '.join(line)
+        pred.append(sentence)
+    new_pred = " ".join(pred)
+    return ref, new_pred
 
 
 
@@ -115,6 +133,14 @@ def evaluate_model(model, descriptions, photos_fe, wordtoix, ixtoword, max_lengt
         actual.append(references)
         predicted.append(yhat.split())
         image_ids.append(key)
+
+
+    # print results
+    new_ref, new_pred = normalize_ref_and_pred(actual, predicted)
+    for i, ref in new_ref:
+        print("Actual caption - {} - {}".format(i, ref))
+    print("Predicted caption - {}".format(new_pred))
+
 
     # calculate BLEU score
     b1=corpus_bleu(actual, predicted, weights=(1.0, 0, 0, 0))
