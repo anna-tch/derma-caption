@@ -219,7 +219,7 @@ def main():
 	df.insert(0, "image_id", image_ids, True)
 	df.insert(1, "predicted", pred, True)
 	# save
-	df.to_csv('../oustput/results.csv', encoding='utf-8', sep = '\t')
+	df.to_csv('../output/results.csv', encoding='utf-8', sep = '\t')
 
 
 
