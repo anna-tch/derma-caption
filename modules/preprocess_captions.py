@@ -53,7 +53,7 @@ def clean_data(descriptions):
 	table = str.maketrans('', '', string.punctuation)
 	# get a list of articles, it's possible to add the article
 	# 'the' too, if needed
-	#articles = ['a', 'an']
+	# articles = ['a', 'an']
 	for key, desc_list in descriptions.items():
 		for i in range(len(desc_list)):
 			desc = desc_list[i]
@@ -66,7 +66,7 @@ def clean_data(descriptions):
 			# remove hanging 's' and 'a'
 			desc = [word for word in desc if len(word)>1]
 			# remove hanging 'an'
-			#desc = [word for word in desc if word not in articles]
+			# desc = [word for word in desc if word not in articles]
 			# remove tokens with numbers in them
 			desc = [word for word in desc if word.isalpha()]
 			# store as string
@@ -131,15 +131,21 @@ def create_reoccurring_vocab(descriptions, word_count_threshold = 10):
 
 
 def calculate_max_length(desc,p):
-	all_desc = []
+	'''
+	finding the maximum length of questions and answers;
+	as some sentences can be unusually long,
+	we take some percentage of their length
+	INPUT :	descriptions (dict), percentage (int)
+	OUTPUT : max len (int)
+	'''
+
 	# Create a list of all the captions
+	all_desc = []
 	for i in desc:
 		for j in desc[i]:
 			all_desc.append(j)
 
-	# finding the maximum length of questions and answers
-	# because there are senteces with unusually long lengths,
-	# we caculate the max length that p% of data can be placed in
+
 	length_all_desc = list(len(d.split()) for d in all_desc)
 
 	print('Percentile {} of len of questions: {}'.format(p,np.percentile(length_all_desc, p)))
@@ -148,38 +154,12 @@ def calculate_max_length(desc,p):
 	return int(np.percentile(length_all_desc, p))
 
 
-def trimRareWords(desc):
-	# only keep the decriptions that have the words from our vocab
-	num_des = 0
-	num_trim = 0
-	desc_result = desc.copy()
-	for d in desc_result:
-		desc_result[d]=[]
-
-	# Filter out pairs with trimmed words
-	i=0
-	for d in desc:
-		i+=1
-		progressBar(value=i, endvalue=len(desc))
-		for p in desc[d]:
-			num_des += 1
-			keep_input = True
-			# Check input sentence
-			for word in p.split(' '):
-				if word not in vocab:
-					keep_input = False
-					break
-
-			# Only keep descriptions that do not contain trimmed word(s) in them
-			if keep_input:
-				num_trim += 1
-				desc_result[d].append(p)
-
-	print("\nTrimmed from {} pairs to {}".format(num_des, num_trim))
-	return desc_result
-
-
 def create_dict_of_indexes(vocab):
+	'''
+	create dictionary of word indexes
+	INPUT : vocab (dict)
+	OUTPUT : ixtoword (dict), wordtoix (dict)
+	'''
 	ixtoword = {} # index to word dic
 	wordtoix = {} # word to index dic
 
@@ -193,7 +173,11 @@ def create_dict_of_indexes(vocab):
 
 
 def load_glove(embedding_dim):
-
+	'''
+	load glove file
+	INPUT : embeddings dimension (int)
+	OUTPUT : embeddings index (dict)
+	'''
 	embeddings_index = {}
 	glove_dir = '../embeddings/'
 	f = open(os.path.join(glove_dir + 'glove.6B.'+str(embedding_dim)+'d.txt'), encoding="utf-8")
@@ -207,6 +191,11 @@ def load_glove(embedding_dim):
 
 
 def make_embedding_layer(vocab_size, wordtoix, embedding_dim=50, glove=True):
+	'''
+	create a vector matrix for the descriptions, make en embedding layer
+	INPUT : vocabulary size (int), wordtoix (dict), embeddings dimension (int), glove (T/F)
+	OUTPUT : embedding layer
+	'''
 	if glove == False:
 		embedding_matrix = np.zeros((vocab_size, embedding_dim))
 		print('Just a zero matrix loaded')
