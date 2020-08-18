@@ -140,7 +140,7 @@ def evaluate_model(model, descriptions, photos_fe, wordtoix, ixtoword, max_lengt
     new_ref, new_pred = normalize_ref_and_pred(actual, predicted)
 
     # print results
-    print("Example of the last caption :")
+    print("\nExample of the last caption :\n")
     for key, value in new_ref.items():
         if key == 128:
             for i, val in enumerate(value):
