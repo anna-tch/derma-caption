@@ -2,6 +2,7 @@ import os.path
 import glob
 import keras
 from numpy import array
+import pandas as pd
 import numpy as np
 import tensorflow as tf
 import keras.backend as K
@@ -100,7 +101,7 @@ def main():
 	# # create a vocabulary
 	print("\nCreating vocabulary...\n")
 	vocab = create_reoccurring_vocab(train_descriptions, word_count_threshold = 5)
-	print("Top ten words:")
+	print("Some examples:")
 	for word in vocab[:10]:
 		print(word)
 	vocab_size = len(vocab) + 1
@@ -203,6 +204,31 @@ def main():
 
 
 
+	print('\n\n\n#######################################################################')
+	print('#  Test model ')
+	print('#######################################################################\n\n\n')
+
+	actual, predicted, image_ids = evaluate_model(model, test_descriptions, test_features)
+	# calculate BLEU score
+	b1=corpus_bleu(actual, predicted, weights=(1.0, 0, 0, 0))
+	b2=corpus_bleu(actual, predicted, weights=(0.5, 0.5, 0, 0))
+	b3=corpus_bleu(actual, predicted, weights=(0.3, 0.3, 0.3, 0))
+	b4=corpus_bleu(actual, predicted, weights=(0.25, 0.25, 0.25, 0.25))
+	print('\n')
+	print('BLEU-1: %f' % b1)
+	print('BLEU-2: %f' % b2)
+	print('BLEU-3: %f' % b3)
+	print('BLEU-4: %f' % b4)
+
+	# normalize
+	ref, pred = normalize_ref_and_pred(actual, predicted)
+	# create df from the dictionary
+	df = pd.DataFrame.from_dict(ref, orient='index', columns=['ref_1', 'ref_2', 'ref_3', 'ref_4', 'ref_5'])
+	# add ids, predicted captions
+	df.insert(0, "image_id", image_ids, True)
+	df.insert(1, "predicted", pred, True)
+	# save
+	df.to_csv('../oustput/results.csv', encoding='utf-8', sep = '\t')
 
 
 
