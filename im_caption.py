@@ -7,7 +7,8 @@ import numpy as np
 import tensorflow as tf
 import keras.backend as K
 from keras.callbacks import ReduceLROnPlateau
-
+import nltk
+from nltk.translate.bleu_score import corpus_bleu
 
 from modules.utils import *
 from modules.extract_features import *
