@@ -165,7 +165,7 @@ def main():
 						min_lr=0.000001)
 
 	for i in range(ep,epochs):
-		print('Epoch :',i,'\n')
+		print('\nEpoch :',i,'\n')
 
 		# create the data generator
 		generator = data_generator(train_descriptions,
