@@ -27,9 +27,7 @@ def main():
 	image_folder = "../images/"
 
 	# get image ids
-	#images = os.listdir(image_folder)
 	images = glob.glob(image_folder + '*.jpg')
-	#print(images)
 	num_images = len(images)
 	print("All images : %d" % num_images)
 
@@ -115,6 +113,8 @@ def main():
 	max_length = calculate_max_length(train_descriptions,85)
 	print('Final max length of captions will be : %d'% max_length)
 
+
+
 	# create indexes for words
 	try:
 		ixtoword, wordtoix = create_dict_of_indexes(vocab)
@@ -134,9 +134,9 @@ def main():
 	# load embd outside in order to make the model faster
 	print("\nCreate an embedding layer...")
 	embedding_layer = make_embedding_layer(vocab_size,
-	 										wordtoix,
-											embedding_dim=50,
-											glove=True)
+					wordtoix,
+					embedding_dim=50,
+					glove=True)
 
 
 
@@ -157,44 +157,45 @@ def main():
 	history={'loss':[], 'BLEU_val':[]}
 
 	Reduce_lr=ReduceLROnPlateau(monitor='loss',
-								factor=0.9,
-								patience=5,
-								verbose=0,
-								mode='auto',
-								min_delta=0.0001,
-								min_lr=0.000001)
+						factor=0.9,
+						patience=5,
+						verbose=0,
+						mode='auto',
+						min_delta=0.0001,
+						min_lr=0.000001)
 
 	for i in range(ep,epochs):
 		print('Epoch :',i,'\n')
 
 		# create the data generator
 		generator = data_generator(train_descriptions,
-									train_features,
-									wordtoix,
-									max_length)
+					train_features,
+					wordtoix,
+					max_length)
 		# fit for one epoch
 		h = model.fit_generator(generator,
-								epochs=1,
-								steps_per_epoch=steps,
-								verbose=1,
-								callbacks=[Reduce_lr] )
+				epochs=1,
+				steps_per_epoch=steps,
+				verbose=1,
+				callbacks=[Reduce_lr] )
+
+
 		ep = i + 1
 		history['loss'].append(h.history['loss'])
-		#print(h.history['loss'])
-		#model.save('model_' + str(i) +  '.h5')
+
 
 		# save model every 10 epochs
 		if i % 3 == 0:
 			#test()
-			print("Save the model...")
+			print("\nSave the model...\n")
 			model.save('../output/model_' + str(i) + '.h5')
 			bleu_eval= evaluate_model(model,
-									dev_descriptions,
-									dev_features,
-									wordtoix,
-									ixtoword,
-									max_length,
-									K_beams=1)
+						dev_descriptions,
+						dev_features,
+						wordtoix,
+						ixtoword,
+						max_length,
+						K_beams=1)
 
 			history['BLEU_val'].append((bleu_eval,i))
 
