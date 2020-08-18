@@ -103,11 +103,9 @@ def normalize_ref_and_pred(actual, predicted):
         ref[i] = sentences
 
     # normalize predicted
-    pred = []
-    for i, line in enumerate(predicted):
-        sentence = ' '.join(line)
-        pred.append(sentence)
-    new_pred = " ".join(pred)
+
+    new_pred = " ".join(predicted).replace("<startseq>", "").replace("<endseq>", "")
+
     return ref, new_pred
 
 
@@ -139,8 +137,8 @@ def evaluate_model(model, descriptions, photos_fe, wordtoix, ixtoword, max_lengt
     new_ref, new_pred = normalize_ref_and_pred(actual, predicted)
 
     # print results
-    for i, ref in enumerate(new_ref):
-        print("Actual caption - {} - {}".format(i, ref))
+    for key, value in new_ref.items():
+        print("Actual caption - {} - {}".format(key, value))
     print("Predicted caption - {}".format(new_pred))
 
 
