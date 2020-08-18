@@ -135,9 +135,11 @@ def evaluate_model(model, descriptions, photos_fe, wordtoix, ixtoword, max_lengt
         image_ids.append(key)
 
 
-    # print results
+    # convert results to a more readable format
     new_ref, new_pred = normalize_ref_and_pred(actual, predicted)
-    for i, ref in new_ref:
+
+    # print results
+    for i, ref in enumerate(new_ref):
         print("Actual caption - {} - {}".format(i, ref))
     print("Predicted caption - {}".format(new_pred))
 
