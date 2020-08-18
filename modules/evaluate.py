@@ -141,11 +141,12 @@ def evaluate_model(model, descriptions, photos_fe, wordtoix, ixtoword, max_lengt
 
     # print results
     print("\n\nActual captions :")
-    for key, value in new_ref.items():
-        if key == 128:
-            for i, val in enumerate(value):
+    for i, item in enumerate(new_ref):
+        # get the newest captions
+        if i == len(new_ref) - 1:
+            for i, val in enumerate(new_ref[i]):
                 print("{} - {}".format(i, val))
-            print("Predicted caption - {}".format(new_pred[key]))
+            print("Predicted caption : {}".format(new_pred[key]))
 
 
     # calculate BLEU score
