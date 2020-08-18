@@ -144,7 +144,7 @@ def evaluate_model(model, descriptions, photos_fe, wordtoix, ixtoword, max_lengt
         for k, v in new_pred.items():
             print("Actual caption - {} - {}".format(key, value))
             if key == k:
-                print("Predicted caption - {}".format(new_pred[]))
+                print("Predicted caption - {}".format(v))
 
 
     # calculate BLEU score
