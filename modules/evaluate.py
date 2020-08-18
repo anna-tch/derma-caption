@@ -144,8 +144,8 @@ def evaluate_model(model, descriptions, photos_fe, wordtoix, ixtoword, max_lengt
     for i, item in enumerate(new_ref):
         # get the newest captions
         if i == len(new_ref) - 1:
-            for i, val in enumerate(new_ref[i]):
-                print("{} - {}".format(i, val))
+            for num, val in enumerate(new_ref[i]):
+                print("{} - {}".format(num, val))
             print("Predicted caption : {}".format(new_pred[i]))
 
 
