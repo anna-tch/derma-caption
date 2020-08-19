@@ -223,8 +223,8 @@ def main():
 
 		# evaluate with bleu score, store results
 		actual, predicted, image_ids = evaluate_model(latest_model,
-					test_descriptions,
-					test_features,
+					dev_descriptions,
+					dev_features,
 					wordtoix,
 					ixtoword,
 					max_length)
