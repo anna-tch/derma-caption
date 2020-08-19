@@ -158,7 +158,7 @@ def main():
 	model.compile(loss=masked_loss_function, optimizer= 'adam')
 
 	ep = 1
-	epochs = 120
+	epochs = 170
 	batch_size= 32
 	steps = len(train_descriptions)//batch_size
 	history={'loss':[], 'BLEU_val':[]}
@@ -234,7 +234,7 @@ def main():
 	df = pd.DataFrame.from_dict(norm_actual, orient='index', columns=['ref_1', 'ref_2', 'ref_3', 'ref_4', 'ref_5'])
 	df.insert(0, "image_id", image_ids, True)
 	df.insert(1, "predicted", norm_predicted, True)
-	df.to_csv('../output/results.csv', encoding='utf-8', sep = '\t')
+	df.to_csv('../results.csv', encoding='utf-8', sep = '\t')
 
 
 
