@@ -27,10 +27,10 @@ from modules.evaluate import *
 
 def main():
 
-	parser = argparse.ArgumentParser()
-	parser.add_argument('--train', action='store_true')
-	parser.add_argument('--test', action='store_true')
-	args = parser.parse_args()
+	#parser = argparse.ArgumentParser()
+	#parser.add_argument('--train', action='store_true')
+	#parser.add_argument('--test', action='store_true')
+	#args = parser.parse_args()
 
 	print('\n\n\n#######################################################################')
 	print('#  Load images ')
@@ -146,57 +146,55 @@ def main():
 
 
 
-	if args.train:
-
-		print('\n\n\n#######################################################################')
-		print('#  Train model ')
-		print('#######################################################################\n\n\n')
+	print('\n\n\n#######################################################################')
+	print('#  Train model ')
+	print('#######################################################################\n\n\n')
 
 
-		# define the model
-		model = make_model(embedding_layer, max_length, vocab_size)
+	# define the model
+	model = make_model(embedding_layer, max_length, vocab_size)
 
-		# compile
-		model.compile(loss=masked_loss_function, optimizer= 'adam')
+	# compile
+	model.compile(loss=masked_loss_function, optimizer= 'adam')
 
-		ep = 1
-		epochs = 120
-		batch_size= 32
-		steps = len(train_descriptions)//batch_size
-		history={'loss':[], 'BLEU_val':[]}
-		Reduce_lr=ReduceLROnPlateau(monitor='loss',
-							factor=0.9,
-							patience=5,
-							verbose=0,
-							mode='auto',
-							min_delta=0.0001,
-							min_lr=0.000001)
+	ep = 1
+	epochs = 120
+	batch_size= 32
+	steps = len(train_descriptions)//batch_size
+	history={'loss':[], 'BLEU_val':[]}
+	Reduce_lr=ReduceLROnPlateau(monitor='loss',
+						factor=0.9,
+						patience=5,
+						verbose=0,
+						mode='auto',
+						min_delta=0.0001,
+						min_lr=0.000001)
 
-		for i in range(ep,epochs):
-			print('\nEpoch :',i,'\n')
+	for i in range(ep,epochs):
+		print('\nEpoch :',i,'\n')
 
-			# create the data generator
-			generator = data_generator(train_descriptions,
-						train_features,
-						wordtoix,
-						max_length)
-			# fit for one epoch
-			h = model.fit_generator(generator,
-					epochs=1,
-					steps_per_epoch=steps,
-					verbose=1,
-					callbacks=[Reduce_lr] )
+		# create the data generator
+		generator = data_generator(train_descriptions,
+					train_features,
+					wordtoix,
+					max_length)
+		# fit for one epoch
+		h = model.fit_generator(generator,
+				epochs=1,
+				steps_per_epoch=steps,
+				verbose=1,
+				callbacks=[Reduce_lr] )
 
-			#model.save('../output/model_' + str(i) + '.h5')
-			ep = i + 1
-			history['loss'].append(h.history['loss'])
+		#model.save('../output/model_' + str(i) + '.h5')
+		ep = i + 1
+		history['loss'].append(h.history['loss'])
 
 
-			# save model every 10 epochs
-			if i % 3 == 0:
-				print("\nSave the model...\n")
-				model.save('../output/model_' + str(i) + '.h5')
-				bleu_eval= evaluate_model(model,
+		# save model every 10 epochs
+		if i % 3 == 0:
+			print("\nSave the model...\n")
+			model.save('../output/model_' + str(i) + '.h5')
+			bleu_eval= evaluate_model(model,
 							dev_descriptions,
 							dev_features,
 							wordtoix,
@@ -204,41 +202,41 @@ def main():
 							max_length,
 							K_beams=1)
 
-				history['BLEU_val'].append((bleu_eval,i))
+			history['BLEU_val'].append((bleu_eval,i))
 
-		print('Finished!')
+	print('Finished!')
 
 
-	if args.test:
+	print('\n\n\n#######################################################################')
+	print('#  Test model ')
+	print('#######################################################################\n\n\n')
 
-		print('\n\n\n#######################################################################')
-		print('#  Test model ')
-		print('#######################################################################\n\n\n')
+	# load the model
+	#list_of_files = glob.glob('../output/*.h5')
+	#latest_file = max(list_of_files, key=os.path.getctime)
+	#print("Loading the latest model : {}".format(latest_file))
+	#latest_model = keras.models.load_model(latest_file, custom_objects={'masked_loss_function': masked_loss_function})
 
-		# load the model
-		list_of_files = glob.glob('../output/*.h5')
-		latest_file = max(list_of_files, key=os.path.getctime)
-		print("Loading the latest model : {}".format(latest_file))
-		latest_model = keras.models.load_model(latest_file, custom_objects={'masked_loss_function': masked_loss_function})
-
-		# evaluate with bleu score, store results
-		actual, predicted, image_ids = evaluate_model(latest_model,
-					dev_descriptions,
-					dev_features,
+	# evaluate with bleu score, store results
+	actual, predicted, image_ids = evaluate_model(model,
+					test_descriptions,
+					test_features,
 					wordtoix,
 					ixtoword,
 					max_length)
 
 
-		# normalize the results
-		norm_actual, norm_predicted = normalize_ref_and_pred(actual, predicted)
+	# normalize the results
+	norm_actual, norm_predicted = normalize_ref_and_pred(actual, predicted)
 
 
-		# save
-		df = pd.DataFrame.from_dict(norm_actual, orient='index', columns=['ref_1', 'ref_2', 'ref_3', 'ref_4', 'ref_5'])
-		df.insert(0, "image_id", image_ids, True)
-		df.insert(1, "predicted", norm_predicted, True)
-		df.to_csv('../output/results.csv', encoding='utf-8', sep = '\t')
+	# save
+	df = pd.DataFrame.from_dict(norm_actual, orient='index', columns=['ref_1', 'ref_2', 'ref_3', 'ref_4', 'ref_5'])
+	df.insert(0, "image_id", image_ids, True)
+	df.insert(1, "predicted", norm_predicted, True)
+	df.to_csv('../output/results.csv', encoding='utf-8', sep = '\t')
+
+
 
 
 
