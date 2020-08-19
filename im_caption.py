@@ -160,7 +160,7 @@ def main():
 		model.compile(loss=masked_loss_function, optimizer= 'adam')
 
 		ep = 1
-		epochs = 170
+		epochs = 120
 		batch_size= 32
 		steps = len(train_descriptions)//batch_size
 		history={'loss':[], 'BLEU_val':[]}
